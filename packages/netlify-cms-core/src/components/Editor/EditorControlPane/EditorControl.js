@@ -18,7 +18,6 @@ import {
   clearMediaControl,
   removeMediaControl,
 } from 'Actions/mediaLibrary';
-import { getAsset, selectEntry } from '../../../reducers';
 import Widget from './Widget';
 
 /**
@@ -140,7 +139,7 @@ class EditorControl extends React.Component {
     fieldsMetaData: ImmutablePropTypes.map,
     fieldsErrors: ImmutablePropTypes.map,
     mediaPaths: ImmutablePropTypes.map.isRequired,
-    boundGetAsset: PropTypes.func.isRequired,
+    getAsset: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
     openMediaLibrary: PropTypes.func.isRequired,
     addAsset: PropTypes.func.isRequired,
@@ -170,7 +169,7 @@ class EditorControl extends React.Component {
       fieldsMetaData,
       fieldsErrors,
       mediaPaths,
-      boundGetAsset,
+      getAsset,
       onChange,
       openMediaLibrary,
       clearMediaControl,
@@ -188,6 +187,7 @@ class EditorControl extends React.Component {
       loadEntry,
       t,
     } = this.props;
+
     const widgetName = field.get('widget');
     const widget = resolveWidget(widgetName);
     const fieldName = field.get('name');
@@ -272,7 +272,7 @@ class EditorControl extends React.Component {
               onRemoveMediaControl={removeMediaControl}
               onRemoveInsertedMedia={removeInsertedMedia}
               onAddAsset={addAsset}
-              getAsset={boundGetAsset}
+              getAsset={getAsset}
               hasActiveStyle={this.state.styleActive}
               setActiveStyle={() => this.setState({ styleActive: true })}
               setInactiveStyle={() => this.setState({ styleActive: false })}
@@ -280,7 +280,14 @@ class EditorControl extends React.Component {
               getEditorComponents={getEditorComponents}
               ref={processControlRef && partial(processControlRef, field)}
               controlRef={controlRef}
-              editorControl={ConnectedEditorControl}
+              editorControl={props => (
+                <ConnectedEditorControl
+                  collection={this.props.collection}
+                  entry={this.props.entry}
+                  getAsset={this.props.getAsset}
+                  {...props}
+                />
+              )}
               query={query}
               loadEntry={loadEntry}
               queryHits={queryHits}
@@ -303,18 +310,11 @@ class EditorControl extends React.Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => {
-  const { collections } = state;
-  const slug = ownProps.match?.params?.params[0];
-  const collection = collections.get(ownProps.match?.params?.name);
-  const entry = selectEntry(state, collection?.get('name'), slug);
-
+const mapStateToProps = state => {
   return {
     mediaPaths: state.mediaLibrary.get('controlMedia'),
     isFetching: state.search.get('isFetching'),
     queryHits: state.search.get('queryHits'),
-    collection,
-    entry,
   };
 };
 
@@ -331,27 +331,17 @@ const mapDispatchToProps = {
   },
   clearSearch,
   clearFieldErrors,
-  boundGetAsset: (collection, entryPath) => path => (dispatch, getState) => {
-    return getAsset({ dispatch, getState, collection, entryPath, path });
-  },
-};
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => {
-  return {
-    ...stateProps,
-    ...dispatchProps,
-    ...ownProps,
-    boundGetAsset: dispatchProps.boundGetAsset(
-      stateProps.collection,
-      stateProps.entry?.get('path'),
-    ),
-  };
 };
 
 const ConnectedEditorControl = connect(
   mapStateToProps,
   mapDispatchToProps,
-  mergeProps,
 )(translate()(EditorControl));
+
+ConnectedEditorControl.propTypes = {
+  collection: ImmutablePropTypes.map.isRequired,
+  entry: ImmutablePropTypes.map.isRequired,
+  getAsset: PropTypes.func.isRequired,
+};
 
 export default ConnectedEditorControl;

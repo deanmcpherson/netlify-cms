@@ -191,6 +191,7 @@ class EditorInterface extends Component {
           onChange={onChange}
           onValidate={onValidate}
           ref={c => (this.controlPaneRef = c)}
+          getAsset={getAsset}
         />
       </ControlPaneContainer>
     );
