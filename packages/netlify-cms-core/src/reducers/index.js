@@ -36,8 +36,8 @@ export default reducers;
 export const selectEntry = (state, collection, slug) =>
   fromEntries.selectEntry(state.entries, collection, slug);
 
-export const selectEntries = (state, collection) =>
-  fromEntries.selectEntries(state.entries, collection);
+export const selectEntries = (state, collection, searchQuery) =>
+  fromEntries.selectEntries(state.entries, collection, searchQuery);
 
 export const selectPublishedSlugs = (state, collection) =>
   fromEntries.selectPublishedSlugs(state.entries, collection);
