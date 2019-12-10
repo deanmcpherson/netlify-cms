@@ -12,6 +12,7 @@
     "build:demo:copy": "ncp packages/netlify-cms/dist dev-test/dist/",
     "clean": "rimraf \"packages/*/dist\" dev-test/dist",
     "clean:lerna": "lerna clean --yes",
+    "copypf": "cp packages/netlify-cms/dist/* ../help/static/admin/",
     "reset": "run-s clean clean:lerna",
     "test": "run-s clean lint test:unit",
     "test:ci": "run-s clean lint-quiet test:unit",
