@@ -33,6 +33,7 @@ describe('defaultPhrases', () => {
           },
           collectionTop: {
             viewAs: 'View as',
+            search: 'Quick search',
             newButton: 'New %{collectionLabel}',
           },
           entries: {
@@ -79,6 +80,7 @@ describe('defaultPhrases', () => {
         },
         collectionTop: {
           viewAs: 'View as',
+          search: 'Quick search',
           newButton: 'New %{collectionLabel}',
         },
         entries: {

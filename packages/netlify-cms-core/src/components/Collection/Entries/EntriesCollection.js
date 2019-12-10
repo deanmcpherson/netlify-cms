@@ -63,12 +63,14 @@ class EntriesCollection extends React.Component {
 }
 
 function mapStateToProps(state, ownProps) {
-  const { collection, viewStyle } = ownProps;
+  const { collection, viewStyle, searchQuery } = ownProps;
+  
   const { config } = state;
   const publicFolder = config.get('public_folder');
   const page = state.entries.getIn(['pages', collection.get('name'), 'page']);
 
-  const entries = selectEntries(state, collection.get('name'));
+  const entries = selectEntries(state, collection.get('name'), searchQuery);
+  
   const entriesLoaded = !!state.entries.getIn(['pages', collection.get('name')]);
   const isFetching = state.entries.getIn(['pages', collection.get('name'), 'isFetching'], false);
 

@@ -107,9 +107,21 @@ export const selectEntry = (state, collection, slug) =>
 export const selectPublishedSlugs = (state, collection) =>
   state.getIn(['pages', collection, 'ids'], List());
 
-export const selectEntries = (state, collection) => {
+export const selectEntries = (state, collection, searchQuery) => {
   const slugs = selectPublishedSlugs(state, collection);
-  return slugs && slugs.map(slug => selectEntry(state, collection, slug));
+  return slugs && slugs.map(slug => {
+     const entry = selectEntry(state, collection, slug)
+     if (searchQuery) {
+       const title = entry.getIn(['data', 'title']);
+       
+       if (!title) return entry;
+       if (title.toLowerCase().includes(searchQuery.toLowerCase())) {
+         return entry;
+       }
+       return false;
+     }
+     return entry;
+    }).filter(x => x);
 };
 
 export default entries;

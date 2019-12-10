@@ -3,7 +3,7 @@ import React from 'react';
 import styled from '@emotion/styled';
 import { translate } from 'react-polyglot';
 import { Link } from 'react-router-dom';
-import { Icon, components, buttons, shadows, colors } from 'netlify-cms-ui-default';
+import { Icon, components, buttons, shadows, colors, colorsRaw, lengths } from 'netlify-cms-ui-default';
 import { VIEW_STYLE_LIST, VIEW_STYLE_GRID } from 'Constants/collectionViews';
 
 const CollectionTopContainer = styled.div`
@@ -33,6 +33,23 @@ const CollectionTopNewButton = styled(Link)`
 const CollectionTopDescription = styled.p`
   ${components.cardTopDescription};
 `;
+
+const SearchInput = styled.input`
+  background-color: #eff0f4;
+  border-radius: ${lengths.borderRadius};
+  font-size: 14px;
+  padding: 10px 6px 10px 32px;
+  width: 100%;
+  margin-right: 24px;
+  position: relative;
+  z-index: 0;
+
+  &:focus {
+    outline: none;
+    box-shadow: inset 0 0 0 2px ${colorsRaw.blue};
+  }
+`;
+
 
 const ViewControls = styled.div`
   display: flex;
@@ -64,47 +81,63 @@ const ViewControlsButton = styled.button`
   }
 `;
 
-const CollectionTop = ({
-  collectionLabel,
-  collectionLabelSingular,
-  collectionDescription,
-  viewStyle,
-  onChangeViewStyle,
-  newEntryUrl,
-  t,
-}) => {
-  return (
-    <CollectionTopContainer>
-      <CollectionTopRow>
-        <CollectionTopHeading>{collectionLabel}</CollectionTopHeading>
-        {newEntryUrl ? (
-          <CollectionTopNewButton to={newEntryUrl}>
-            {t('collection.collectionTop.newButton', {
-              collectionLabel: collectionLabelSingular || collectionLabel,
-            })}
-          </CollectionTopNewButton>
-        ) : null}
-      </CollectionTopRow>
-      {collectionDescription ? (
-        <CollectionTopDescription>{collectionDescription}</CollectionTopDescription>
-      ) : null}
-      <ViewControls>
-        <ViewControlsText>{t('collection.collectionTop.viewAs')}:</ViewControlsText>
-        <ViewControlsButton
-          isActive={viewStyle === VIEW_STYLE_LIST}
-          onClick={() => onChangeViewStyle(VIEW_STYLE_LIST)}
-        >
-          <Icon type="list" />
-        </ViewControlsButton>
-        <ViewControlsButton
-          isActive={viewStyle === VIEW_STYLE_GRID}
-          onClick={() => onChangeViewStyle(VIEW_STYLE_GRID)}
-        >
-          <Icon type="grid" />
-        </ViewControlsButton>
-      </ViewControls>
-    </CollectionTopContainer>
-  );
+class CollectionTop extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {};
+  }
+  render () {
+    const {query} = this.state;
+    const {
+      collectionLabel,
+      collectionLabelSingular,
+      collectionDescription,
+      viewStyle,
+      onChangeViewStyle,
+      onSearch,
+      newEntryUrl,
+      t,
+    } = this.props;
+      
+      return (
+        <CollectionTopContainer>
+          <CollectionTopRow>
+            <CollectionTopHeading>{collectionLabel}</CollectionTopHeading>
+            {newEntryUrl ? (
+              <CollectionTopNewButton to={newEntryUrl}>
+                {t('collection.collectionTop.newButton', {
+                  collectionLabel: collectionLabelSingular || collectionLabel,
+                })}
+              </CollectionTopNewButton>
+            ) : null}
+          </CollectionTopRow>
+          {collectionDescription ? (
+            <CollectionTopDescription>{collectionDescription}</CollectionTopDescription>
+          ) : null}
+          <ViewControls>
+            <SearchInput  
+                onChange={e => this.setState({ query: e.target.value })}
+                onKeyDown={e => e.key === 'Enter' && onSearch(query)}
+                placeholder={t('collection.collectionTop.search')}
+                value={query}
+              ></SearchInput>
+            <ViewControlsText>{t('collection.collectionTop.viewAs')}:</ViewControlsText>
+            <ViewControlsButton
+              isActive={viewStyle === VIEW_STYLE_LIST}
+              onClick={() => onChangeViewStyle(VIEW_STYLE_LIST)}
+            >
+              <Icon type="list" />
+            </ViewControlsButton>
+            <ViewControlsButton
+              isActive={viewStyle === VIEW_STYLE_GRID}
+              onClick={() => onChangeViewStyle(VIEW_STYLE_GRID)}
+            >
+              <Icon type="grid" />
+            </ViewControlsButton>
+          </ViewControls>
+        </CollectionTopContainer>
+      );
+      };
 };
 
 CollectionTop.propTypes = {

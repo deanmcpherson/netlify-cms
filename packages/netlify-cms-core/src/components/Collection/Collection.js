@@ -20,6 +20,7 @@ const CollectionMain = styled.main`
 `;
 
 class Collection extends React.Component {
+  
   static propTypes = {
     searchTerm: PropTypes.string,
     collectionName: PropTypes.string,
@@ -34,7 +35,8 @@ class Collection extends React.Component {
 
   renderEntriesCollection = () => {
     const { collection } = this.props;
-    return <EntriesCollection collection={collection} viewStyle={this.state.viewStyle} />;
+    
+    return <EntriesCollection collection={collection} searchQuery={this.state.query} viewStyle={this.state.viewStyle} />;
   };
 
   renderEntriesSearch = () => {
@@ -62,6 +64,8 @@ class Collection extends React.Component {
               collectionDescription={collection.get('description')}
               newEntryUrl={newEntryUrl}
               viewStyle={this.state.viewStyle}
+              onSearch={query => this.setState({query})}
+
               onChangeViewStyle={this.handleChangeViewStyle}
             />
           )}
